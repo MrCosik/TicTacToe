@@ -11,21 +11,16 @@ public class Main {
 
         String userInput = scan.nextLine();
 
-        //Change user input into array of char, also change all _ to spaces
-        char[] allCharacters = userInput.replaceAll("_", " ").toCharArray();
+        //Change user input into array of char
+        char[] allCharacters = userInput.toCharArray();
         char[][] sortedChars = new char[3][3];
-
 
         //change 1d array to 2d
         transform1Dto2DArray(allCharacters, sortedChars);
         //show this array
         Show2DArray(sortedChars);
 
-
-        if (!CheckIfPossible(allCharacters)){
-            CheckIfSomebodyWon(sortedChars,allCharacters);
-        }
-
+        CheckIfSomebodyWon(sortedChars,allCharacters);
     }
 
     //private static boolean CheckIfFinished()
@@ -41,7 +36,6 @@ public class Main {
                 numberOfOs++;
             }
         }
-
         return Math.abs(numberOfXs - numberOfOs) <= 1;
     }
 
@@ -51,7 +45,15 @@ public class Main {
         int colSum = 0;
         int diagonalSum = 0;
         int diagonalSumRev = 0;
-        boolean win = false;
+        int blankSpaces = 0;
+        boolean winX = false;
+        boolean winO = false;
+
+        for(char blank : allCharacters){
+            if (blank == '_') {
+                blankSpaces++;
+            }
+        }
 
         for (int i = 0; i < sortedChars.length; i++) {
             for (int j = 0; j < sortedChars.length; j++) {
@@ -65,21 +67,32 @@ public class Main {
                     diagonalSumRev += sortedChars[i][j];
                 }
             }
+            //now we check what is the value on every variable to confirm if there is a win on any of it
             if (rowSum == 264 || diagonalSum == 264 || diagonalSumRev == 264 || colSum == 264) {
-                System.out.println("X wins");
-                win = true;
+                winX = true;
             } else if (rowSum == 237 || diagonalSum == 237 || diagonalSumRev == 237 || colSum == 237) {
-                System.out.println("O wins");
-                win = true;
-            } else {
-                rowSum = 0;
-                colSum = 0;
+                winO = true;
             }
-
-
+            rowSum = 0;
+            colSum = 0;
         }
-        if(!win){
-            System.out.println("Draw");
+        //first we check if the number of X's on board is not bigger than O's by more than 1
+        //then we check if there are not two winners at the same time
+        //finally who wins or if it's draw, game is not finished if there are blank spaces left and nobody won
+        if(CheckIfPossible(allCharacters)){
+            if(winX && winO){
+                System.out.println("Impossible");
+            }else if(winX){
+                System.out.println("X wins");
+            } else if(winO){
+                System.out.println("O wins");
+            } else if(blankSpaces > 0){
+                System.out.println("Game not finished");
+            }else{
+              System.out.println("Draw");
+            }
+        } else {
+            System.out.println("Impossible");
         }
     }
 
@@ -104,8 +117,6 @@ public class Main {
         }
 
     }
-
-
 }
 
 

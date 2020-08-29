@@ -6,41 +6,84 @@ public class Main {
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         System.out.println("Hello, enter 9 characters:");
-
-        int finalNumber = 0;
-
-        String userInput = scan.nextLine();
+        String userInput = "         ";
 
         //Change user input into array of char
         char[] allCharacters = userInput.toCharArray();
         char[][] sortedChars = new char[3][3];
+        char currentMove;
+        int moveCounter = 0;
 
         //change 1d array to 2d
         transform1Dto2DArray(allCharacters, sortedChars);
         //show this array
-        Show2DArray(sortedChars);
 
-        CheckIfSomebodyWon(sortedChars,allCharacters);
+        boolean again = true;
+        do {
+            if (moveCounter % 2 == 0) {
+                currentMove = 'X';
+            } else {
+                currentMove = 'O';
+            }
+            Show2DArray(sortedChars);
+            System.out.print("Enter the coordinates: ");
+            int x = scan.nextInt() - 1;
+            int y = scan.nextInt() - 1;
+            if (x > 2 || y > 2) {
+                System.out.println("Coordinates should be from 1 to 3!");
+            } else {
+                if (!PlayerMove(sortedChars, x, y, currentMove)) {
+                    System.out.println("This cell is occupied! Choose another one!");
+                } else {
+                    switch (CheckIfSomebodyWon(sortedChars, allCharacters)) {
+                        case "X wins" -> {
+                            Show2DArray(sortedChars);
+                            System.out.println("X wins");
+                            again = false;
+                        }
+                        case "O wins" -> {
+                            Show2DArray(sortedChars);
+                            System.out.println("O wins");
+                            again = false;
+                        }
+                        case "Draw" -> {
+                            Show2DArray(sortedChars);
+                            System.out.println("Draw");
+                            again = false;
+                        }
+                        default -> {
+                            moveCounter++;
+                            again = true;
+                        }
+                    }
+                }
+            }
+        } while (again);
     }
 
-    //private static boolean CheckIfFinished()
+    private static boolean PlayerMove(char[][] sortedChars, int x, int y, char currentMove) {
+        if (sortedChars[Math.abs(2 - y)][x] == ' ') {
+            sortedChars[Math.abs(2 - y)][x] = currentMove;
+            return true;
+        }
+        return false;
+    }
 
     private static boolean CheckIfPossible(char[] allCharacters) {
         int numberOfXs = 0;
         int numberOfOs = 0;
 
-        for(char chars : allCharacters){
-            if(chars == 'X'){
+        for (char chars : allCharacters) {
+            if (chars == 'X') {
                 numberOfXs++;
-            }else if(chars == 'O'){
+            } else if (chars == 'O') {
                 numberOfOs++;
             }
         }
         return Math.abs(numberOfXs - numberOfOs) <= 1;
     }
 
-
-    private static void CheckIfSomebodyWon(char[][] sortedChars, char[] allCharacters) {
+    private static String CheckIfSomebodyWon(char[][] sortedChars, char[] allCharacters) {
         int rowSum = 0;
         int colSum = 0;
         int diagonalSum = 0;
@@ -48,9 +91,10 @@ public class Main {
         int blankSpaces = 0;
         boolean winX = false;
         boolean winO = false;
+        String finalResault;
 
-        for(char blank : allCharacters){
-            if (blank == '_') {
+        for (char blank : allCharacters) {
+            if (blank == ' ') {
                 blankSpaces++;
             }
         }
@@ -79,21 +123,28 @@ public class Main {
         //first we check if the number of X's on board is not bigger than O's by more than 1
         //then we check if there are not two winners at the same time
         //finally who wins or if it's draw, game is not finished if there are blank spaces left and nobody won
-        if(CheckIfPossible(allCharacters)){
-            if(winX && winO){
-                System.out.println("Impossible");
-            }else if(winX){
-                System.out.println("X wins");
-            } else if(winO){
-                System.out.println("O wins");
-            } else if(blankSpaces > 0){
-                System.out.println("Game not finished");
-            }else{
-              System.out.println("Draw");
-            }
+//        if (CheckIfPossible(allCharacters)) {
+//            if (winX && winO) {
+//                System.out.println("Impossible");
+        //} else
+        if (winX) {
+            finalResault = "X wins";
+        } else if (winO) {
+            finalResault = "O wins";
+
+//            } else if (blankSpaces > 0) {
+//                System.out.println("Game not finished");
+        } else if (blankSpaces == 0) {
+            finalResault = "Draw";
         } else {
-            System.out.println("Impossible");
+            finalResault = "";
         }
+//        } else if(!CheckIfPossible(allCharacters)){
+//            System.out.println("Impossible");
+//        }else {
+//            return true;
+//        }
+        return finalResault;
     }
 
     private static void Show2DArray(char[][] sortedChars) {
@@ -115,7 +166,6 @@ public class Main {
                 sortedChars[i][j] = allCharacters[j % 3 + i * 3];
             }
         }
-
     }
 }
 

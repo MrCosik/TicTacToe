@@ -69,20 +69,6 @@ public class Main {
         return false;
     }
 
-    private static boolean CheckIfPossible(char[] allCharacters) {
-        int numberOfXs = 0;
-        int numberOfOs = 0;
-
-        for (char chars : allCharacters) {
-            if (chars == 'X') {
-                numberOfXs++;
-            } else if (chars == 'O') {
-                numberOfOs++;
-            }
-        }
-        return Math.abs(numberOfXs - numberOfOs) <= 1;
-    }
-
     private static String CheckIfSomebodyWon(char[][] sortedChars, char[] allCharacters) {
         int rowSum = 0;
         int colSum = 0;
@@ -93,9 +79,11 @@ public class Main {
         boolean winO = false;
         String finalResault;
 
-        for (char blank : allCharacters) {
-            if (blank == ' ') {
-                blankSpaces++;
+        for (char[] blank : sortedChars) {
+            for (char c : blank) {
+                if (c == ' ') {
+                    blankSpaces++;
+                }
             }
         }
 
@@ -120,30 +108,17 @@ public class Main {
             rowSum = 0;
             colSum = 0;
         }
-        //first we check if the number of X's on board is not bigger than O's by more than 1
-        //then we check if there are not two winners at the same time
-        //finally who wins or if it's draw, game is not finished if there are blank spaces left and nobody won
-//        if (CheckIfPossible(allCharacters)) {
-//            if (winX && winO) {
-//                System.out.println("Impossible");
-        //} else
+        //whoever won we sing the value to a string to check it with switch later
+        //if its blank the game loop will continue
         if (winX) {
             finalResault = "X wins";
         } else if (winO) {
             finalResault = "O wins";
-
-//            } else if (blankSpaces > 0) {
-//                System.out.println("Game not finished");
         } else if (blankSpaces == 0) {
             finalResault = "Draw";
         } else {
             finalResault = "";
         }
-//        } else if(!CheckIfPossible(allCharacters)){
-//            System.out.println("Impossible");
-//        }else {
-//            return true;
-//        }
         return finalResault;
     }
 

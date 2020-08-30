@@ -20,11 +20,8 @@ public class Main {
 
         boolean again = true;
         do {
-            if (moveCounter % 2 == 0) {
-                currentMove = 'X';
-            } else {
-                currentMove = 'O';
-            }
+            currentMove = moveCounter%2 == 0 ? 'X' : 'O';
+
             Show2DArray(sortedChars);
             System.out.print("Enter the coordinates: ");
             int x = scan.nextInt() - 1;
